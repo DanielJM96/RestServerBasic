@@ -1,6 +1,10 @@
-const {Router, request} = require ('express');
+const {Router, request, response} = require ('express');
+
+const bcryptjs = require('bcryptjs');
 
 const router = Router();
+
+
 //OBTENER USUARIOS/ get 
 router.get('/', (req = request, res = response)  => {
     res.status(200).json({
@@ -10,15 +14,25 @@ router.get('/', (req = request, res = response)  => {
 
 //CREAR USUARIOS / post 
 
-router.post('/',(reg = request, res= response )=> {
-    res.status(200).json ({
-        msg: 'post usuarios'
-    })
+router.post('/',(req = request, res= response )=> {
+    
+    const {password, ...data} = req.body;
+    
+    const salt= bcryptjs.genSaltSync();
+    const newPassword = bcryptjs.hashSync(`${data.password}`,salt);
+
+    const newUser ={
+
+        message: 'Usuario creado satisfactoriamente',
+        data: data, 
+    }
+
+    res.status(200).json(newUser)
 
 });
 
 // OBTENER USUARIO POR ID / get 
-router.get('/:id',(reg = request, res= response )=> {
+router.get('/:id',(req = request, res= response )=> {
     res.status(200).json ({
         msg: 'get usuarios por id '
     })
